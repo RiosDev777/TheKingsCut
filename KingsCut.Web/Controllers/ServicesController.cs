@@ -9,15 +9,15 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace KingsCut.Web.Controllers
 {
-    public class UsersController : Controller
+    public class ServicesController : Controller
     {
 
-        private readonly IUsersServices _usersService;
+        private readonly IServicesServices _servicesService;
         private readonly INotyfService _notifyService;
 
-        public UsersController(IUsersServices UsersService, INotyfService notyfService)
+        public ServicesController(IServicesServices ServicesService, INotyfService notyfService)
         {
-            _usersService = UsersService;
+            _servicesService = ServicesService;
             _notifyService = notyfService;
         }
 
@@ -26,7 +26,7 @@ namespace KingsCut.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            Response<List<User>> response = await _usersService.GetListAsync();
+            Response<List<Service>> response = await _servicesService.GetListAsync();
             return View(response.Result);
         }
 
@@ -42,7 +42,7 @@ namespace KingsCut.Web.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            Response<User> response = await _usersService.GetDetailsAsync(id);
+            Response<Service> response = await _servicesService.GetDetailsAsync(id);
 
             if (response.IsSuccess)
             {
@@ -59,35 +59,35 @@ namespace KingsCut.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,Contact,Description,IsActive")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Name,ServiceType,Price,Description")] Service service)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Response<User> response = await _usersService.CreateAsync(user);
+                    Response<Service> response = await _servicesService.CreateAsync(service);
                     if (response.IsSuccess)
                     {
-                        _notifyService.Success("El usuario ha sido creado satisfactoriamente");
+                        _notifyService.Success("El servicio ha sido creado satisfactoriamente");
                         return RedirectToAction(nameof(Index));
                     }
                     // TODO: Mostrar mensaje de error si no se creó el usero
                     ModelState.AddModelError("", response.Message);
                 }
 
-                return View(user);
+                return View(service);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Error: {ex.Message}");
-                return View(user);
+                return View(service);
             }
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            Response<User> response = await _usersService.GetOneAsync(id);
+            Response<Service> response = await _servicesService.GetOneAsync(id);
 
             if (response.IsSuccess)
             {
@@ -104,7 +104,7 @@ namespace KingsCut.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(User user)
+        public async Task<IActionResult> Edit(Service service)
         {
             try
             {
@@ -112,14 +112,14 @@ namespace KingsCut.Web.Controllers
                 {
 
                     //TODO: mensaje de error
-                    return View(user);
+                    return View(service);
                 }
 
-                Response<User> response = await _usersService.EditAsync(user);
+                Response<Service> response = await _servicesService.EditAsync(service);
 
                 if (response.IsSuccess)
                 {
-                    _notifyService.Success("El usuario se ha editado satisfactoriamente");
+                    _notifyService.Success("El servicio se ha editado satisfactoriamente");
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -129,14 +129,14 @@ namespace KingsCut.Web.Controllers
             {
 
                 //TODO: mensaje de error
-                return View(user);
+                return View(service);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            Response<User> response = await _usersService.DeleteteAsync(id);
+            Response<Service> response = await _servicesService.DeleteteAsync(id);
 
             if (response.IsSuccess)
             {

@@ -15,7 +15,7 @@ namespace KingsCut.Web.Data.Entities
 
         [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "decimal(18, 0)")]
         public decimal Price { get; set; }
 
         [Display(Name = "Descripción")]

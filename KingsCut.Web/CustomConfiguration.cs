@@ -47,7 +47,7 @@ namespace KingsCut.Web
         { 
 
             builder.Services.AddScoped<IProductsService, ProductService>();
-            builder.Services.AddScoped<IUsersServices, UserService>();
+            builder.Services.AddScoped<IServicesServices, ServiceService>();
         }
                
 

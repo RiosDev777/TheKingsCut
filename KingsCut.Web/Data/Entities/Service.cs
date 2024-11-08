@@ -1,28 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KingsCut.Web.Data.Entities
 {
-    public class User
+    public class Service
     {
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "Usuario")]
+        [Display(Name = "Servicio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
         public string Name { get; set; }
 
-        [Display(Name = "Correo Electrónico")]
+        [Display(Name = "Tipo de Servicio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
-        public string Email { get; set; }
+        public string? ServiceType { get; set; }
 
-        [Display(Name = "Teléfono")]
+        [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
-        public string Contact { get; set; }
+        [Column(TypeName = "decimal(18, 0)")]
+        public decimal Price { get; set; }
 
         [Display(Name = "Descripción")]
         public string? Description { get; set; }
 
-        [Display(Name = "¿Está activo?")]
-        public bool IsActive { get; set; }
     }
 }

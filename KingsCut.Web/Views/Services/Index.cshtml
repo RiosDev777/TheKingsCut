@@ -1,10 +1,10 @@
-﻿@model IEnumerable<KingsCut.Web.Data.Entities.User>
+﻿@model IEnumerable<KingsCut.Web.Data.Entities.Service>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Usuarios</h1>
+<h1>Servicios</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary mt-4">Crear Nuevo</a>
@@ -24,17 +24,14 @@
                                 @Html.DisplayNameFor(model => model.Name)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Email)
+                                @Html.DisplayNameFor(model => model.ServiceType)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Contact)
+                                @Html.DisplayNameFor(model => model.Price)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.Description)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.IsActive)
-                            </th>
+                            </th>                            
                             <th></th>
                         </tr>
                     </thead>
@@ -45,17 +42,14 @@
                                 @Html.DisplayFor(modelItem => item.Name)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Email)
+                                    @Html.DisplayFor(modelItem => item.ServiceType)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Contact)
+                                    @Html.DisplayFor(modelItem => item.Price)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Description)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.IsActive)
-                            </td>
+                            </td>                            
                             <td>
                                     <div class="d-flex justify-content-around">
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning me-10">Editar<i class="bi bi-pencil-fill"></i></a>
@@ -88,7 +82,7 @@
 
                 Swal.fire({
 
-                    title: "¿Desea eliminar la sección?",
+                    title: "¿Desea eliminar el servicio?",
                     text: "No podrá revertirlo",
                     icon: "question",
                     showCancelButton: true,
