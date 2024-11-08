@@ -1,4 +1,7 @@
-﻿@model IEnumerable<KingsCut.Web.Data.Entities.Service>
+﻿@using KingsCut.Web.Data.Entities
+@model PaginationResponse<Service>
+
+
 
 @{
     ViewData["Title"] = "Index";
@@ -17,38 +20,49 @@
                 @*  <h3 class="panel-title">Usuario</h3> *@
             </div>
             <div class="panel-body mt-4">
+
+                <form class="navbar-search" asp-action="Index" method="GET">
+
+                    <input type="hidden" name="Page" value="@Model.CurrentPage" />
+                    <input type="hidden" name="RecordsPerPage" value="@Model.RecordsPerPage" />
+
+                    <div class="input-group mb-3">
+
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar..." aria-label="Serch" asp-form="@Model.Filter" name="Filter" />
+
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
                 <table class="table table-hover table-responsive table-striped" id="MyTable">
                     <thead>
                         <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Name)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ServiceType)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Price)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Description)
-                            </th>                            
-                            <th></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Tipo de servicio</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Descripcion</th>                            
                         </tr>
                     </thead>
                     <tbody>
-                @foreach (var item in Model) {
+                        @foreach (Service item in Model.List)
+                        {
                         <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Name)
+                                    @item.Name
                             </td>
                             <td>
-                                    @Html.DisplayFor(modelItem => item.ServiceType)
+                                    @item.ServiceType
                             </td>
                             <td>
-                                    @Html.DisplayFor(modelItem => item.Price)
+                                    @item.Price
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Description)
+                                    @item.Description
                             </td>                            
                             <td>
                                     <div class="d-flex justify-content-around">
@@ -65,6 +79,71 @@
                 }
                     </tbody>
                 </table>
+                <nav aria-label="">
+
+                    <ul class="pagination justify-content-center">
+
+                        @* Primero *@
+                        <li class="page-item">
+                            <a class="page-link  @(Model.CurrentPage == 1 ? "disabled" : "")"
+                               asp-action="Index"
+                               asp-route-Page="1"
+                               asp-route-Filter="@Model.Filter"
+                               asp-route-RecordsPerPage="@Model.RecordsPerPage">
+                                &laquo;
+                            </a>
+                        </li>
+
+                        @* Anterior *@
+                        <li class="page-item">
+                            <a class="page-link  @(!Model.HasPrevious ? "disabled" : "")"
+                               asp-action="Index"
+                               asp-route-Page="@(Model.CurrentPage - 1)"
+                               asp-route-Filter="@Model.Filter"
+                               asp-route-RecordsPerPage="@Model.RecordsPerPage">
+                                &lsaquo;
+                            </a>
+                        </li>
+
+                        @* Páginas *@
+                        @foreach (int page in Model.Pages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link  @(Model.CurrentPage == page ? "disabled" : "")"
+                                   asp-action="Index"
+                                   asp-route-Page="@(page)"
+                                   asp-route-Filter="@Model.Filter"
+                                   asp-route-RecordsPerPage="@Model.RecordsPerPage">
+                                    @(page)
+                                </a>
+                            </li>
+                        }
+
+                        @* Siguiente *@
+                        <li class="page-item">
+                            <a class="page-link  @(!Model.HasNext ? "disabled" : "")"
+                               asp-action="Index"
+                               asp-route-Page="@(Model.CurrentPage + 1)"
+                               asp-route-Filter="@Model.Filter"
+                               asp-route-RecordsPerPage="@Model.RecordsPerPage">
+                                &rsaquo;
+                            </a>
+                        </li>
+
+                        @* Último *@
+                        <li class="page-item">
+                            <a class="page-link  @(Model.TotalPages == Model.CurrentPage ? "disabled" : "")"
+                               asp-action="Index"
+                               asp-route-Page="@(Model.TotalPages)"
+                               asp-route-Filter="@Model.Filter"
+                               asp-route-RecordsPerPage="@Model.RecordsPerPage">
+                                &raquo;
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
             </div>
         </div>
     </div>
@@ -108,19 +187,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
-                },
-                "aLengthMenu": [
-                    [5, 10, 30, 50, 100, -1],
-                    [5, 10, 30, 50, 100, "Todos"]
-                ]
-            });
-        });
-    </script>
+    
 }

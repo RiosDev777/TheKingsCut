@@ -5,6 +5,7 @@ using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TheKingsCut.Web.Core.Pagination;
 using static System.Collections.Specialized.BitVector32;
 
 namespace KingsCut.Web.Controllers
@@ -24,10 +25,21 @@ namespace KingsCut.Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
+                                               [FromQuery] int? Page,
+                                               [FromQuery] string? Filter)
         {
-            
-            Response<List<Product>> response = await _productsService.GetListAsync();
+
+            PaginationRequest request = new PaginationRequest
+            {
+
+                RecordsPerPage = RecordsPerPage ?? 15,
+                Page = Page ?? 1,
+                Filter = Filter
+
+            };
+
+            Response<PaginationResponse<Product>> response = await _productsService.GetListAsync(request);
             return View(response.Result);
         }
 

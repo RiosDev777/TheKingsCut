@@ -3,23 +3,24 @@ using KingsCut.Web.Data;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Helper;
 using Microsoft.EntityFrameworkCore;
+using TheKingsCut.Web.Core.Pagination;
 
 
-namespace KingsCut.Web.Services 
+namespace KingsCut.Web.Services
 
-{ 
+{
 
     public interface IServicesServices
 
     {
-            public Task<Response<Service>> CreateAsync(Service model);
-            public Task<Response<Service>> EditAsync(Service model);
-            public Task<Response<List<Service>>> GetListAsync();
-            public Task<Response<Service>> GetOneAsync(int id);
-            public Task<Response<Service>> DeleteteAsync(int id);
-            public Task<Response<Service>> GetDetailsAsync(int id);
+        public Task<Response<Service>> CreateAsync(Service model);
+        public Task<Response<Service>> EditAsync(Service model);
+        public Task<Response<PaginationResponse<Service>>> GetListAsync(PaginationRequest request);
+        public Task<Response<Service>> GetOneAsync(int id);
+        public Task<Response<Service>> DeleteteAsync(int id);
+        public Task<Response<Service>> GetDetailsAsync(int id);
 
-        }
+    }
 
     public class ServiceService : IServicesServices
     {
@@ -41,7 +42,7 @@ namespace KingsCut.Web.Services
                     ServiceType = model.ServiceType,
                     Price = model.Price,
                     Description = model.Description,
-                    
+
                 };
                 await _context.Services.AddAsync(service);
                 await _context.SaveChangesAsync();
@@ -115,21 +116,40 @@ namespace KingsCut.Web.Services
             }
         }
 
-        public async Task<Response<List<Service>>> GetListAsync()
+        public async Task<Response<PaginationResponse<Service>>> GetListAsync(PaginationRequest request)
         {
             try
             {
 
-                List<Service> services = await _context.Services.ToListAsync();
+                IQueryable<Service> query = _context.Services.AsQueryable();
 
-                return ResponseHelper<List<Service>>.MakeResponseSuccess(services);
+                if (!string.IsNullOrWhiteSpace(request.Filter))
+                {
 
+                    query = query.Where(s => s.Name.ToLower().Contains(request.Filter.ToLower()));
+                }
+
+                PagedList<Service> list = await PagedList<Service>.ToPagedListAsync(query, request);
+
+                PaginationResponse<Service> result = new PaginationResponse<Service>
+                {
+
+                    List = list,
+                    TotalCount = list.TotalCount,
+                    RecordsPerPage = list.RecordsPerPage,
+                    CurrentPage = list.CurrentPage,
+                    TotalPages = list.TotalPages,
+                    Filter = request.Filter
+
+                };
+
+                return ResponseHelper<PaginationResponse<Service>>.MakeResponseSuccess(result, "Servicio obtenido con éxito");
 
             }
             catch (Exception ex)
             {
 
-                return ResponseHelper<List<Service>>.MakeResponseFail(ex);
+                return ResponseHelper<PaginationResponse<Service>>.MakeResponseFail(ex);
 
             }
         }

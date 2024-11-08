@@ -3,6 +3,7 @@ using KingsCut.Web.Data;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Helper;
 using Microsoft.EntityFrameworkCore;
+using TheKingsCut.Web.Core.Pagination;
 
 namespace KingsCut.Web.Services
 {
@@ -10,7 +11,7 @@ namespace KingsCut.Web.Services
     {
         public Task<Response<Product>> CreateAsync(Product model);
         public Task<Response<Product>> EditAsync(Product model);
-        public Task<Response<List<Product>>> GetListAsync();
+        public Task<Response<PaginationResponse<Product>>> GetListAsync(PaginationRequest request);
         public Task<Response<Product>> GetOneAsync(int id);
         public Task<Response<Product>> DeleteteAsync(int id);
         public Task<Response<Product>> GetDetailsAsync(int id);
@@ -110,21 +111,41 @@ namespace KingsCut.Web.Services
             }
         }
 
-        public async Task<Response<List<Product>>> GetListAsync()
+        public async Task<Response<PaginationResponse<Product>>> GetListAsync(PaginationRequest request)
         {
             try
             {
 
-                List<Product> products = await _context.Products.ToListAsync();
+                IQueryable<Product> query = _context.Products.AsQueryable();
 
-                return ResponseHelper<List<Product>>.MakeResponseSuccess(products);
-            
-            
+                if (!string.IsNullOrWhiteSpace(request.Filter))
+                {
+
+                    query = query.Where(s => s.Name.ToLower().Contains(request.Filter.ToLower()));
+                }
+
+                PagedList<Product> list = await PagedList<Product>.ToPagedListAsync(query, request);
+
+                PaginationResponse<Product> result = new PaginationResponse<Product>
+                {
+
+                    List = list,
+                    TotalCount = list.TotalCount,
+                    RecordsPerPage = list.RecordsPerPage,
+                    CurrentPage = list.CurrentPage,
+                    TotalPages = list.TotalPages,
+                    Filter = request.Filter
+
+                };
+
+                return ResponseHelper<PaginationResponse<Product>>.MakeResponseSuccess(result, "Producto obtenido con éxito");
+
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
-                return ResponseHelper<List<Product>> .MakeResponseFail(ex);
+                return ResponseHelper<PaginationResponse<Product>>.MakeResponseFail(ex);
 
             }
         }
@@ -151,3 +172,4 @@ namespace KingsCut.Web.Services
 
     }
 }
+
