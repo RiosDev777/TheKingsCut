@@ -4,23 +4,38 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link collapsed" asp-controller="Home" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "" : "collapsed")" 
+                asp-controller="Home" 
+                asp-action="Index">
                 <i class="bi bi-house"></i>
                 <span>Home</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" asp-controller="Services" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "" : "collapsed")" 
+                asp-controller="Services" 
+                asp-action="Index">
                 <i class="bi bi-people"></i>
                 <span>Servicios</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" asp-controller="Products" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "" : "collapsed")"
+                asp-controller="Products" 
+                asp-action="Index">
                 <i class="bi bi-bag"></i>
                 <span>Productos</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link  @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "" : "collapsed")"
+               asp-controller="Users"
+               asp-action="Index">
+                <i class="bi bi-person"></i>
+                <span>Usuarios</span>
             </a>
         </li>
 

@@ -6,6 +6,7 @@ using KingsCut.Web.Services;
 using KingsCut.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using KingsCut.Web.Data.Seeders;
+using KingsCut.Web.Helper;
 
 namespace KingsCut.Web
 {
@@ -82,8 +83,8 @@ namespace KingsCut.Web
 
 
             // Helpers
-            //builder.Services.AddScoped<ICombosHelper, CombosHelper>();
-            //builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
+            builder.Services.AddScoped<ICombosHelper, CombosHelper>();
+            builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
         }
                
 

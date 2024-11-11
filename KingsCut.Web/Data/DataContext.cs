@@ -24,9 +24,9 @@ namespace KingsCut.Web.Data
             //
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Service>().HasIndex(c => c.Name).IsUnique();
+            //modelBuilder.Entity<Service>().HasIndex(c => c.Name).IsUnique();
 
-            modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
+            //modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
         }
 
         private void Configurekeys(ModelBuilder builder)

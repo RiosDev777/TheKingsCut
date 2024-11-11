@@ -3,6 +3,7 @@ using KingsCut.Web.Core;
 using KingsCut.Web.Data;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheKingsCut.Web.Core.Pagination;
@@ -23,7 +24,7 @@ namespace KingsCut.Web.Controllers
         }
 
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                [FromQuery] int? Page,
