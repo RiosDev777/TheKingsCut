@@ -10,17 +10,17 @@ namespace KingsCut.Web.Data.Entities
         [Display(Name = "Permiso")]
         [MaxLength(64, ErrorMessage = "El Campo {0} debetner maximo {1} caracteres.")]
         [Required(ErrorMessage = "El Campo {0} es requerido.")]
-        public string Name { get; set; } = null;
+        public string Name { get; set; } = null!;
 
         [Display(Name = "Descripcion")]
         [MaxLength(512, ErrorMessage = "El Campo {0} debetner maximo {1} caracteres.")]
         [Required(ErrorMessage = "El Campo {0} es requerido.")]
-        public string Description { get; set; } = null;
+        public string Description { get; set; } = null!;
 
         [Display(Name = "Modulo")]
         [MaxLength(64, ErrorMessage = "El Campo {0} debetner maximo {1} caracteres.")]
         [Required(ErrorMessage = "El Campo {0} es requerido.")]
-        public string Module { get; set; } = null;
+        public string Module { get; set; } = null!;
 
         public ICollection<RolePermission> RolePermissions{ get; set; }
     }

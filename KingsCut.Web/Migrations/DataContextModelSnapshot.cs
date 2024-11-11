@@ -40,7 +40,7 @@ namespace KingsCut.Web.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("KingsCutRole");
+                    b.ToTable("KingsCutRoles");
                 });
 
             modelBuilder.Entity("KingsCut.Web.Data.Entities.Permission", b =>

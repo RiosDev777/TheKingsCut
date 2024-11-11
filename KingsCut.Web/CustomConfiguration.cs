@@ -5,6 +5,7 @@ using AspNetCoreHero.ToastNotification.Extensions;
 using KingsCut.Web.Services;
 using KingsCut.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using KingsCut.Web.Data.Seeders;
 
 namespace KingsCut.Web
 {
@@ -57,7 +58,7 @@ namespace KingsCut.Web
                 conf.Password.RequireLowercase = false;
                 conf.Password.RequireUppercase = false;
                 conf.Password.RequireNonAlphanumeric = false;
-                conf.Password.RequiredLength = 0;
+                conf.Password.RequiredLength = 4;
             }).AddEntityFrameworkStores<DataContext>() //Almacenado de sesion
             .AddDefaultTokenProviders();   //Aqui iria cualquier tipo de token si se llega a usar
 
@@ -66,16 +67,23 @@ namespace KingsCut.Web
             {
                 conf.Cookie.Name = "Auth";
                 conf.ExpireTimeSpan = TimeSpan.FromDays(5); //tiempo de duracion de la cookies
-                conf.LoginPath = "Account/Login";
-                conf.AccessDeniedPath = "Account/NotAuthorized";
+                conf.LoginPath = "/Account/Login";
+                conf.AccessDeniedPath = "/Account/NotAuthorized";
             });
         }
 
         public static void AddServices(WebApplicationBuilder builder) 
         { 
-
+            //Services
             builder.Services.AddScoped<IProductsService, ProductService>();
             builder.Services.AddScoped<IServicesServices, ServiceService>();
+            builder.Services.AddTransient<SeedDb>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+
+
+            // Helpers
+            //builder.Services.AddScoped<ICombosHelper, CombosHelper>();
+            //builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
         }
                
 
@@ -83,8 +91,20 @@ namespace KingsCut.Web
         {
             app.UseNotyf();
 
+            SeedData(app);
+
             return app;
         }
 
+        private static void SeedData(WebApplication app)
+        {
+            IServiceScopeFactory scopeFactory = app.Services.GetService<IServiceScopeFactory>();
+
+            using (IServiceScope scope = scopeFactory!.CreateScope())
+            {
+                SeedDb service = scope.ServiceProvider.GetService<SeedDb>();
+                service!.SeedAsync().Wait();
+            }
+        }
     }
 }

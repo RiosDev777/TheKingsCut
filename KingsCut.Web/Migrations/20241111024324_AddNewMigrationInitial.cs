@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KingsCut.Web.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSquema : Migration
+    public partial class AddNewMigrationInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace KingsCut.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "KingsCutRole",
+                name: "KingsCutRoles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -35,7 +35,7 @@ namespace KingsCut.Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_KingsCutRole", x => x.Id);
+                    table.PrimaryKey("PK_KingsCutRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,9 +134,9 @@ namespace KingsCut.Web.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_KingsCutRole_KingsCutRoleId",
+                        name: "FK_AspNetUsers_KingsCutRoles_KingsCutRoleId",
                         column: x => x.KingsCutRoleId,
-                        principalTable: "KingsCutRole",
+                        principalTable: "KingsCutRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -152,9 +152,9 @@ namespace KingsCut.Web.Migrations
                 {
                     table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
                     table.ForeignKey(
-                        name: "FK_RolePermissions_KingsCutRole_RoleId",
+                        name: "FK_RolePermissions_KingsCutRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "KingsCutRole",
+                        principalTable: "KingsCutRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -301,8 +301,8 @@ namespace KingsCut.Web.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KingsCutRole_Name",
-                table: "KingsCutRole",
+                name: "IX_KingsCutRoles_Name",
+                table: "KingsCutRoles",
                 column: "Name",
                 unique: true);
 
@@ -361,7 +361,7 @@ namespace KingsCut.Web.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "KingsCutRole");
+                name: "KingsCutRoles");
         }
     }
 }

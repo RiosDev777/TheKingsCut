@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KingsCut.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241110161836_AddSquema")]
-    partial class AddSquema
+    [Migration("20241111024324_AddNewMigrationInitial")]
+    partial class AddNewMigrationInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace KingsCut.Web.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("KingsCutRole");
+                    b.ToTable("KingsCutRoles");
                 });
 
             modelBuilder.Entity("KingsCut.Web.Data.Entities.Permission", b =>

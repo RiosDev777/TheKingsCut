@@ -10,7 +10,7 @@ namespace KingsCut.Web.Data.Entities
         [Display(Name = "Rol")]
         [MaxLength(64, ErrorMessage = "El Campo {0} debetner maximo {1} caracteres.")]
         [Required(ErrorMessage = "El Campo {0} es requerido.")]
-        public string Name { get; set; } = null;
+        public string Name { get; set; } = null!;
 
         public ICollection<RolePermission> RolePermissions { get; set; } 
     }

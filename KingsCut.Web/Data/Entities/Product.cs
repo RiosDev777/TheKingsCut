@@ -11,7 +11,7 @@ namespace KingsCut.Web.Data.Entities
         [MaxLength(50, ErrorMessage = "El campo '{0}' debe tener máximo {1} caracteres")]
         [Display(Name = "Producto")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]

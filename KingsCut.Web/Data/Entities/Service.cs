@@ -10,7 +10,7 @@ namespace KingsCut.Web.Data.Entities
 
         [Display(Name = "Servicio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [Display(Name = "Tipo de Servicio")]
         [Required(ErrorMessage = "El campo '{0}' es requerido.")]

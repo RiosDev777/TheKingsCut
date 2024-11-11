@@ -1,7 +1,6 @@
 ﻿using KingsCut.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace KingsCut.Web.Data
 {
@@ -13,6 +12,7 @@ namespace KingsCut.Web.Data
 
         public DbSet<Service> Services { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<KingsCutRole> KingsCutRoles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
@@ -45,11 +45,11 @@ namespace KingsCut.Web.Data
         private void ConfigureIndexes(ModelBuilder builder)
         {
             //Roles
-            builder.Entity<KingsCutRole>().HasIndex(s => s.Name).IsUnique();
+            builder.Entity<KingsCutRole>().HasIndex(r => r.Name).IsUnique();
 
             //Users
             builder.Entity<User>().HasIndex(u => u.Document).IsUnique();
-           
+
         }
     }
 }
