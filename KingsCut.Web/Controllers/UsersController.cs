@@ -11,6 +11,7 @@ namespace KingsCut.Web.Controllers
 {
     public class UsersController : Controller
     {
+<<<<<<< Updated upstream
 
         private readonly IUsersServices _usersService;
         private readonly INotyfService _notifyService;
@@ -19,6 +20,19 @@ namespace KingsCut.Web.Controllers
         {
             _usersService = UsersService;
             _notifyService = notyfService;
+=======
+        private readonly ICombosHelper _combosHelper;
+        private readonly INotyfService _notifyService;
+        private readonly IUsersService _usersService;
+        private readonly IConverterHelper _converterHelper;
+
+        public UsersController(INotyfService notifyService, IUsersService usersService, ICombosHelper combosHelper, IConverterHelper converterHelper)
+        {
+            _notifyService = notifyService;
+            _usersService = usersService;
+            _combosHelper = combosHelper;
+            _converterHelper = converterHelper;
+>>>>>>> Stashed changes
         }
 
 
@@ -133,14 +147,50 @@ namespace KingsCut.Web.Controllers
             }
         }
 
+<<<<<<< Updated upstream
         [HttpPost]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             Response<User> response = await _usersService.DeleteteAsync(id);
+=======
+        [HttpGet]
+        public async Task<IActionResult>Edit(Guid id)
+        {
+            if (Guid.Empty.Equals(id))
+            {
+                return NotFound();
+            }
+
+            User user = await _usersService.GetUserAsync(id);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            UserDTO dto = await _converterHelper.ToUserDTOAsync(user, false);
+            
+            return View(dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                _notifyService.Error("Debe ajustar los errores de validación");
+                dto.KingsCutRoles = await _combosHelper.GetComboKingsCutRolesAsync();
+                return View(dto);
+            }
+
+            Response<User> response = await _usersService.UpdateUserAsync(dto);
+>>>>>>> Stashed changes
 
             if (response.IsSuccess)
             {
                 _notifyService.Success(response.Message);
+<<<<<<< Updated upstream
             }
             else
             {
@@ -158,5 +208,14 @@ namespace KingsCut.Web.Controllers
 
 
 
+=======
+                return RedirectToAction(nameof(Index));
+            }
+
+            _notifyService.Error(response.Message);
+            dto.KingsCutRoles = await _combosHelper.GetComboKingsCutRolesAsync();
+            return View(dto);
+        }
+>>>>>>> Stashed changes
     }
 }

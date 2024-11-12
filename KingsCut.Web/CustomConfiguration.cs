@@ -30,8 +30,17 @@ namespace KingsCut.Web
 
                 AddServices(builder);
 
+<<<<<<< Updated upstream
                 //TOAST NOTIFICATION
+=======
+                //Identity and Access Managment
+                AddIAM(builder);
+>>>>>>> Stashed changes
 
+            //PAM: Privileged access Management
+
+
+                //TOAST NOTIFICATION
                 builder.Services.AddNotyf(config => 
                 { 
                     config.DurationInSeconds = 10; 
