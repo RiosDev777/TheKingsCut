@@ -20,7 +20,7 @@ namespace KingsCut.Web
                 configuration.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection"));
             });
 
-
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddNotyf(config =>
             {
@@ -29,13 +29,10 @@ namespace KingsCut.Web
                 config.Position = NotyfPosition.BottomRight;
             });
 
-                //services
 
                 AddServices(builder);
 
-                //Identity and Access Managment
                 AddIAM(builder);
-                //TOAST NOTIFICATION
 
                 builder.Services.AddNotyf(config => 
                 { 
@@ -53,21 +50,19 @@ namespace KingsCut.Web
             builder.Services.AddIdentity<User, IdentityRole>(conf =>
             {
                 conf.User.RequireUniqueEmail = true;
-                //Esta parte en desarrollo no es tan relevante, pero en la parte de despliegue es importante activarlos para generar seguridad en la contraseña
                 conf.Password.RequireDigit = false;
                 conf.Password.RequiredUniqueChars = 0;
                 conf.Password.RequireLowercase = false;
                 conf.Password.RequireUppercase = false;
                 conf.Password.RequireNonAlphanumeric = false;
                 conf.Password.RequiredLength = 4;
-            }).AddEntityFrameworkStores<DataContext>() //Almacenado de sesion
-            .AddDefaultTokenProviders();   //Aqui iria cualquier tipo de token si se llega a usar
+            }).AddEntityFrameworkStores<DataContext>() 
+            .AddDefaultTokenProviders();   
 
-            //Configuracion de la cookie
             builder.Services.ConfigureApplicationCookie(conf =>
             {
                 conf.Cookie.Name = "Auth";
-                conf.ExpireTimeSpan = TimeSpan.FromDays(5); //tiempo de duracion de la cookies
+                conf.ExpireTimeSpan = TimeSpan.FromDays(5); 
                 conf.LoginPath = "/Account/Login";
                 conf.AccessDeniedPath = "/Account/NotAuthorized";
             });
@@ -101,7 +96,7 @@ namespace KingsCut.Web
         {
             IServiceScopeFactory scopeFactory = app.Services.GetService<IServiceScopeFactory>();
 
-            using (IServiceScope scope = scopeFactory!.CreateScope())
+            using (IServiceScope scope = scopeFactory.CreateScope())
             {
                 SeedDb service = scope.ServiceProvider.GetService<SeedDb>();
                 service!.SeedAsync().Wait();

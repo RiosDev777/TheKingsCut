@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KingsCut.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241111024324_AddNewMigrationInitial")]
-    partial class AddNewMigrationInitial
+    [Migration("20241113022008_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

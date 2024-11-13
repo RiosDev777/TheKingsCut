@@ -16,12 +16,14 @@ namespace KingsCut.Web.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly INotyfService _notifyService;
         private readonly IUsersService _usersService;
+        private readonly IConverterHelper _converterHelper;
 
-        public UsersController(INotyfService notifyService, IUsersService usersService, ICombosHelper combosHelper)
+        public UsersController(INotyfService notifyService, IUsersService usersService, ICombosHelper combosHelper, IConverterHelper converterHelper)
         {
             _notifyService = notifyService;
             _usersService = usersService;
             _combosHelper = combosHelper;
+            _converterHelper = converterHelper;
         }
 
 
@@ -82,5 +84,57 @@ namespace KingsCut.Web.Controllers
                 return View(dto);
             }
         }
+
+        public async Task<IActionResult>Edit(Guid id)
+        {
+
+            if (Guid.Empty.Equals(id))
+            {
+
+                return NotFound();
+
+            }
+
+            User user = await _usersService.GetUserAsync(id);  
+            
+            if (user is null)
+            {
+                return NotFound();
+
+            }
+
+            UserDTO dto = await _converterHelper.ToUserDTOAsync(user, false);
+
+            return View(dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserDTO dto)
+        {
+
+            if(!ModelState.IsValid) 
+            {
+
+                _notifyService.Error("Debe ajustar los errores de validación");
+                dto.KingsCutRoles = await _combosHelper.GetComboKingsCutRolesAsync();
+                return View(dto);
+            
+            }
+
+            Response<User> response = await _usersService.UpdateUserAsync(dto);
+
+            if (response.IsSuccess)
+            {
+                _notifyService.Success(response.Message);
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            _notifyService.Error(response.Message);
+            dto.KingsCutRoles = await _combosHelper.GetComboKingsCutRolesAsync();
+            return View(dto);
+        }
+
     }
 }

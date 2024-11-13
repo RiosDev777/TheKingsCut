@@ -1,8 +1,10 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using KingsCut.Web.Core;
+using KingsCut.Web.Core.Attributes;
 using KingsCut.Web.Data;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheKingsCut.Web.Core.Pagination;
@@ -10,8 +12,11 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace KingsCut.Web.Controllers
 {
+
+    [Authorize]
     public class ProductsController : Controller
     {
+        
 
         private readonly IProductsService _productsService;
         private readonly INotyfService _notifyService;
@@ -23,8 +28,10 @@ namespace KingsCut.Web.Controllers
         }
 
 
-
+        
         [HttpGet]
+        [CustomAuthorized(permission: "showProduct", module: "Productos")]
+
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                [FromQuery] int? Page,
                                                [FromQuery] string? Filter)
@@ -44,16 +51,19 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpGet]
+        [CustomAuthorized(permission: "createProduct", module: "Productos")]
+
         public IActionResult Create()
         {
             
             return View();
         }
 
-        
 
-        //ARREGLAR
 
+
+
+        [CustomAuthorized(permission: "showProduct", module: "Productos")]
 
         public async Task<IActionResult> Details(int id)
         {
@@ -73,7 +83,8 @@ namespace KingsCut.Web.Controllers
         //ARREGLAR FIN
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [CustomAuthorized(permission: "createProduct", module: "Productos")]
+
         public async Task<IActionResult> Create([Bind("Id,Name,Price,Description,IsActive")] Product product)
         {
             try
@@ -105,6 +116,8 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpGet]
+        [CustomAuthorized(permission: "editProduct", module: "Productos")]
+
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             Response<Product> response = await _productsService.GetOneAsync(id);
@@ -124,6 +137,8 @@ namespace KingsCut.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorized(permission: "editProduct", module: "Productos")]
+
         public async Task<IActionResult> Edit(Product product)
         {
             try
@@ -154,6 +169,8 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorized(permission: "deleteProduct", module: "Productos")]
+
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             Response<Product> response = await _productsService.DeleteteAsync(id);

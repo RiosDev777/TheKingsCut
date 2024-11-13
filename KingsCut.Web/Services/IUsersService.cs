@@ -4,8 +4,10 @@ using KingsCut.Web.Data.Entities;
 using KingsCut.Web.DTOs;
 using KingsCut.Web.Helper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Elfie.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TheKingsCut.Web.Core.Pagination;
+using ClainUser = System.Security.Claims.ClaimsPrincipal;
 
 namespace KingsCut.Web.Services
 {
@@ -14,12 +16,18 @@ namespace KingsCut.Web.Services
         public Task<IdentityResult> AddUserAsync(User user, string password);
         public Task<IdentityResult> ConfirmEmailAsync(User user, string token);
         public Task<Response<User>> CreateAsync(UserDTO dto);
+
+        public Task<bool> CurrentUserIsAuthorizedAsync(string permission, string module);
         public Task<string> GenerateEmailConfirmationTokenAsync(User user);
         public Task<Response<PaginationResponse<User>>> GetListAsync(PaginationRequest request);
         public Task<User> GetUserAsync(string email);
         public Task<User> GetUserAsync(Guid id);
         public Task<SignInResult> LoginAsync(LoginDTO dto);
         public Task LogoutAsync();
+        public Task<IdentityResult> UpdateUserAsync(User user);
+        public Task<Response<User>> UpdateUserAsync(UserDTO dto);
+
+
     }
     public class UsersService : IUsersService
     {
@@ -27,13 +35,15 @@ namespace KingsCut.Web.Services
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IConverterHelper _converterHelper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersService(DataContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConverterHelper converterHelper)
+        public UsersService(DataContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConverterHelper converterHelper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _converterHelper = converterHelper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password)
@@ -56,7 +66,6 @@ namespace KingsCut.Web.Services
 
                 IdentityResult result = await AddUserAsync(user, dto.Document);
 
-                // TODO: Ajustar cuando se realize funcionalidad para envío de Email
                 string token = await GenerateEmailConfirmationTokenAsync(user);
                 await ConfirmEmailAsync(user, token);
 
@@ -66,6 +75,42 @@ namespace KingsCut.Web.Services
             {
                 return ResponseHelper<User>.MakeResponseFail(ex);
             }
+        }
+
+        public async Task<bool> CurrentUserIsAuthorizedAsync(string permission, string module)
+        {
+
+            ClainUser? clainUser = _httpContextAccessor.HttpContext?.User;
+
+            if (clainUser is null)
+            {
+
+                return false;
+
+            }
+
+            string? userName = clainUser.Identity.Name;
+
+            User? user = await GetUserAsync(userName);
+
+            if(user is null)
+            {
+
+                return false;
+
+            }
+
+            if(user.kingsCutRole.Name == Env.SUPER_ADMIN_ROLE_NAME)
+            {
+
+                return true;
+            }
+
+            return await _context.Permissions.Include(p => p.RolePermissions)
+                                 .AnyAsync(p => (p.Module == module && p.Name == permission)
+                                                && p.RolePermissions.Any(rp => rp.RoleId == user.KingsCutRoleId));
+
+                                                    
         }
 
         public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
@@ -120,7 +165,7 @@ namespace KingsCut.Web.Services
         public async Task<User> GetUserAsync(Guid id)
         {
             return await _context.Users.Include(u => u.kingsCutRole)
-                                             .FirstOrDefaultAsync(u => u.Id == id.ToString());
+                                       .FirstOrDefaultAsync(u => u.Id == id.ToString());
         }
 
         public async Task<SignInResult> LoginAsync(LoginDTO dto)
@@ -131,6 +176,34 @@ namespace KingsCut.Web.Services
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(User user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<Response<User>> UpdateUserAsync(UserDTO dto)
+        {
+            try
+            {
+                User user = await GetUserAsync(dto.Id);
+                user.PhoneNumber = dto.PhoneNumber;
+                user.Document = dto.Document;
+                user.FirstName = dto.FirstName;
+                user.LastName = dto.LastName;
+                user.KingsCutRoleId = dto.KingsCutRoleId;
+
+                _context.Users.Update(user);
+
+                await _context.SaveChangesAsync();
+
+                return ResponseHelper<User>.MakeResponseSuccess(user, "Usuario actualizado con éxito");
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper<User>.MakeResponseFail(ex);
+            }
         }
     }
 }

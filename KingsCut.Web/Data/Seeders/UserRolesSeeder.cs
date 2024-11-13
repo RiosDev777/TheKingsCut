@@ -22,49 +22,6 @@ namespace KingsCut.Web.Data.Seeders
             await CheckUsers();
         }
 
-        private async Task CheckRoles()
-        {
-            await AdminRoleAsync();
-            await ContentManagerAsync();
-            await UserManagerAsync();
-        }
-
-        private async Task UserManagerAsync()
-        {
-            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == "Gestor de usuarios");
-
-            if (!exists)
-            {
-                KingsCutRole role = new KingsCutRole { Name = "Gestor de usuarios" };
-                await _context.KingsCutRoles.AddAsync(role);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        private async Task ContentManagerAsync()
-        {
-            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == "Gestor de contenido");
-
-            if (!exists)
-            {
-                KingsCutRole role = new KingsCutRole { Name = "Gestor de contenido" };
-                await _context.KingsCutRoles.AddAsync(role);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        private async Task AdminRoleAsync()
-        {
-            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == Env.SUPER_ADMIN_ROLE_NAME);
-
-            if (!exists)
-            {
-                KingsCutRole role = new KingsCutRole { Name = Env.SUPER_ADMIN_ROLE_NAME };
-                await _context.KingsCutRoles.AddAsync(role);
-                await _context.SaveChangesAsync();
-            }
-        }
-
         private async Task CheckUsers()
         {
             // Admin
@@ -92,7 +49,7 @@ namespace KingsCut.Web.Data.Seeders
             }
 
             // Content Manager
-            user = await _usersService.GetUserAsync("anad@yopmail.com");
+            user = await _usersService.GetUserAsync("andresurrego@yopmail.com");
 
             if (user is null)
             {
@@ -100,12 +57,12 @@ namespace KingsCut.Web.Data.Seeders
 
                 user = new User
                 {
-                    Email = "anad@yopmail.com",
-                    FirstName = "Ana",
-                    LastName = "Doe",
-                    PhoneNumber = "31111111",
-                    UserName = "anad@yopmail.com",
-                    Document = "22222",
+                    Email = "andresurrego@yopmail.com",
+                    FirstName = "Andrés",
+                    LastName = "Urrego",
+                    PhoneNumber = "3103613690",
+                    UserName = "andresurrego@yopmail.com",
+                    Document = "1192837471",
                     kingsCutRole = contentManagerRole
                 };
 
@@ -115,5 +72,70 @@ namespace KingsCut.Web.Data.Seeders
                 await _usersService.ConfirmEmailAsync(user, token);
             }
         }
+
+        private async Task CheckRoles()
+        {
+            await AdminRoleAsync();
+            await ContentManagerAsync();
+            await UserManagerAsync();
+        }
+
+        private async Task UserManagerAsync()
+        {
+            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == "Gestor de usuarios");
+
+            if (!exists)
+            {
+                KingsCutRole role = new KingsCutRole { Name = "Gestor de usuarios" };
+                await _context.KingsCutRoles.AddAsync(role);
+
+                List<Permission> permissions = await _context.Permissions
+                                                              .Where(p => p.Module == "Usuarios") 
+                                                              .ToListAsync();
+
+                foreach (Permission permission in permissions)
+                {
+                    await _context.RolePermissions.AddAsync(new RolePermission { Permission = permission, Role = role });
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+        private async Task ContentManagerAsync()
+        {
+            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == "Gestor de contenido");
+
+            if (!exists)
+            {
+                KingsCutRole role = new KingsCutRole { Name = "Gestor de contenido" };
+                await _context.KingsCutRoles.AddAsync(role);
+
+                List<Permission> permissions = await _context.Permissions
+                                                              .Where(p => p.Module == "Productos" || p.Module == "Servicios")
+                                                              .ToListAsync();
+
+                foreach (Permission permission in permissions)
+                {
+                    await _context.RolePermissions.AddAsync(new RolePermission { Permission = permission, Role = role });
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task AdminRoleAsync()
+        {
+            bool exists = await _context.KingsCutRoles.AnyAsync(r => r.Name == Env.SUPER_ADMIN_ROLE_NAME);
+
+            if (!exists)
+            {
+                KingsCutRole role = new KingsCutRole { Name = Env.SUPER_ADMIN_ROLE_NAME };
+                await _context.KingsCutRoles.AddAsync(role);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

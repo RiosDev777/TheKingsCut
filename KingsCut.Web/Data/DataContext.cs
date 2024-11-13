@@ -18,15 +18,12 @@ namespace KingsCut.Web.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Se agrega esta seccion para la contruccion de la clave compuesta
             Configurekeys(modelBuilder);
             ConfigureIndexes(modelBuilder);
-            //
+     
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Service>().HasIndex(c => c.Name).IsUnique();
 
-            //modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
         }
 
         private void Configurekeys(ModelBuilder builder)
@@ -36,6 +33,7 @@ namespace KingsCut.Web.Data
             builder.Entity<RolePermission>().HasOne(rp => rp.Role)
                                                     .WithMany(r => r.RolePermissions)
                                                     .HasForeignKey(rp => rp.RoleId);
+                                                    
 
             builder.Entity<RolePermission>().HasOne(rp => rp.Permission)
                                                     .WithMany(p => p.RolePermissions)
@@ -49,6 +47,12 @@ namespace KingsCut.Web.Data
 
             //Users
             builder.Entity<User>().HasIndex(u => u.Document).IsUnique();
+
+            //Products
+            builder.Entity<Product>().HasIndex(p => p.Name).IsUnique();
+
+            //Services
+            builder.Entity<Service>().HasIndex(s => s.Name).IsUnique();
 
         }
     }

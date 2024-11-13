@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using KingsCut.Web.Core;
+using KingsCut.Web.Core.Attributes;
 using KingsCut.Web.Data;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.Services;
@@ -11,6 +12,8 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace KingsCut.Web.Controllers
 {
+
+    [Authorize]
     public class ServicesController : Controller
     {
 
@@ -24,7 +27,7 @@ namespace KingsCut.Web.Controllers
         }
 
 
-        [Authorize]
+        [CustomAuthorized(permission: "showService", module: "Servicios")]
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                [FromQuery] int? Page,
@@ -44,35 +47,17 @@ namespace KingsCut.Web.Controllers
             return View(response.Result);
         }
 
+        
         [HttpGet]
+        [CustomAuthorized(permission: "createService", module: "Servicios")]
         public IActionResult Create()
         {
 
             return View();
         }
 
-        
-
-
-        public async Task<IActionResult> Details(int id)
-        {
-            Response<Service> response = await _servicesService.GetDetailsAsync(id);
-
-            if (response.IsSuccess)
-            {
-                return View(response.Result);
-            }
-
-
-            _notifyService.Error(response.Message);
-            return RedirectToAction(nameof(Index));
-        }
-
-
-        
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [CustomAuthorized(permission: "createService", module: "Servicios")]
         public async Task<IActionResult> Create([Bind("Id,Name,ServiceType,Price,Description")] Service service)
         {
             try
@@ -98,7 +83,29 @@ namespace KingsCut.Web.Controllers
             }
         }
 
+        [CustomAuthorized(permission: "showService", module: "Servicios")]
+        public async Task<IActionResult> Details(int id)
+        {
+            Response<Service> response = await _servicesService.GetDetailsAsync(id);
+
+            if (response.IsSuccess)
+            {
+                return View(response.Result);
+            }
+
+
+            _notifyService.Error(response.Message);
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        
+
+        
+
         [HttpGet]
+        [CustomAuthorized(permission: "editService", module: "Servicios")]
+
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             Response<Service> response = await _servicesService.GetOneAsync(id);
@@ -117,7 +124,7 @@ namespace KingsCut.Web.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [CustomAuthorized(permission: "editService", module: "Servicios")]
         public async Task<IActionResult> Edit(Service service)
         {
             try
@@ -148,6 +155,7 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorized(permission: "deleteService", module: "Servicios")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             Response<Service> response = await _servicesService.DeleteteAsync(id);

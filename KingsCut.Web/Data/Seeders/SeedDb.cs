@@ -15,7 +15,9 @@ namespace KingsCut.Web.Data.Seeders
 
         public async Task SeedAsync()
         {
-            
+
+            await new ProductsSeeder(_context).SeedAsync();
+            await new ServicesSeeder(_context).SeedAsync();
             await new PermissionsSeeder(_context).SeedAsync();
             await new UserRolesSeeder(_context, _usersService).SeedAsync();
         }

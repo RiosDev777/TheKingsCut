@@ -14,7 +14,7 @@ namespace KingsCut.Web.Data.Seeders
 
         public async Task SeedAsync()
         {
-            List<Permission> permissions = [.. Product(), .. Service()];
+            List<Permission> permissions = [.. Product(), .. Service(), .. Users()];
 
             foreach (Permission permission in permissions)
             {
@@ -34,10 +34,10 @@ namespace KingsCut.Web.Data.Seeders
         {
             return new List<Permission>
             {
-                new Permission { Name = "showProduct", Description = "Ver Product", Module = "Product" },
-                new Permission { Name = "createProduct", Description = "Crear Product", Module = "Product" },
-                new Permission { Name = "editProduct", Description = "Editar Product", Module = "Product" },
-                new Permission { Name = "deleteProduct", Description = "Eliminar Product", Module = "Product" },
+                new Permission { Name = "showProduct", Description = "Ver Productos", Module = "Productos" },
+                new Permission { Name = "createProduct", Description = "Crear Productos", Module = "Productos" },
+                new Permission { Name = "editProduct", Description = "Editar Productos", Module = "Productos" },
+                new Permission { Name = "deleteProduct", Description = "Eliminar Productos", Module = "Productos" },
             };
         }
 
@@ -45,10 +45,21 @@ namespace KingsCut.Web.Data.Seeders
         {
             return new List<Permission>
             {
-                new Permission { Name = "showService", Description = "Ver Service", Module = "Service" },
-                new Permission { Name = "createService", Description = "Crear Service", Module = "Service" },
-                new Permission { Name = "editService", Description = "Editar Service", Module = "Service" },
-                new Permission { Name = "deleteService", Description = "Eliminar Service", Module = "Service" },
+                new Permission { Name = "showService", Description = "Ver Servicios", Module = "Servicios" },
+                new Permission { Name = "createService", Description = "Crear Servicios", Module = "Servicios" },
+                new Permission { Name = "editService", Description = "Editar Servicios", Module = "Servicios" },
+                new Permission { Name = "deleteService", Description = "Eliminar Servicios", Module = "Servicios" },
+            };
+        }
+
+        private List<Permission> Users()
+        {
+            return new List<Permission>
+            {
+                new Permission { Name = "showUser", Description = "Ver Usuarios", Module = "Usuarios" },
+                new Permission { Name = "createUser", Description = "Crear Usuarios", Module = "Usuarios" },
+                new Permission { Name = "editUser", Description = "Editar Usuarios", Module = "Usuarios" },
+                new Permission { Name = "deleteUser", Description = "Eliminar Usuarios", Module = "Usuarios" },
             };
         }
     }

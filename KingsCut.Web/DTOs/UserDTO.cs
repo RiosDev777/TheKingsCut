@@ -8,17 +8,17 @@ namespace KingsCut.Web.DTOs
         public Guid Id { get; set; }
 
         [Display(Name = "Documento")]
-        [MaxLength(32, ErrorMessage = "El campo {0} debe terner máximo {1} caractéres.")]
+        [MaxLength(32, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Document { get; set; } = null!;
 
         [Display(Name = "Nombres")]
-        [MaxLength(32, ErrorMessage = "El campo {0} debe terner máximo {1} caractéres.")]
+        [MaxLength(32, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string FirstName { get; set; } = null!;
 
         [Display(Name = "Apellidos")]
-        [MaxLength(32, ErrorMessage = "El campo {0} debe terner máximo {1} caractéres.")]
+        [MaxLength(32, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string LastName { get; set; } = null!;
 
@@ -28,7 +28,7 @@ namespace KingsCut.Web.DTOs
 
         [Display(Name = "Email")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        [EmailAddress(ErrorMessage = "El campo {0} deve ser un Email válido")]
+        [EmailAddress(ErrorMessage = "El campo {0} debe ser un Email válido")]
         public string Email { get; set; } = null!;
 
         public string FullName => $"{FirstName} {LastName}";
