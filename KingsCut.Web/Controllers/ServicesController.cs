@@ -27,8 +27,8 @@ namespace KingsCut.Web.Controllers
         }
 
 
-        [CustomAuthorized(permission: "showService", module: "Servicios")]
         [HttpGet]
+        [CustomAuthorized(permission: "showService", module: "Servicios")]
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                [FromQuery] int? Page,
                                                [FromQuery] string? Filter)

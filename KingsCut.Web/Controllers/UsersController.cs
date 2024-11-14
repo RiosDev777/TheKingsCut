@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using KingsCut.Web.Core;
+using KingsCut.Web.Core.Attributes;
 using KingsCut.Web.Data.Entities;
 using KingsCut.Web.DTOs;
 using KingsCut.Web.Helper;
@@ -28,6 +29,7 @@ namespace KingsCut.Web.Controllers
 
 
         [HttpGet]
+        [CustomAuthorized(permission: "showUser", module: "Usuarios")]
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                 [FromQuery] int? Page,
                                                 [FromQuery] string? Filter)
@@ -44,6 +46,7 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpGet]
+        [CustomAuthorized(permission: "createUser", module: "Usuarios")]
         public async Task<IActionResult> Create()
         {
             UserDTO dto = new UserDTO
@@ -55,6 +58,7 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorized(permission: "createUser", module: "Usuarios")]
         public async Task<IActionResult> Create(UserDTO dto)
         {
             try
@@ -85,6 +89,8 @@ namespace KingsCut.Web.Controllers
             }
         }
 
+        [HttpGet]
+        [CustomAuthorized(permission: "editUser", module: "Usuarios")]
         public async Task<IActionResult>Edit(Guid id)
         {
 
@@ -108,8 +114,10 @@ namespace KingsCut.Web.Controllers
             return View(dto);
         }
 
+        
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [CustomAuthorized(permission: "editUser", module: "Usuarios")]
         public async Task<IActionResult> Edit(UserDTO dto)
         {
 

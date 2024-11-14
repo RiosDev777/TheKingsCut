@@ -72,6 +72,7 @@ namespace KingsCut.Web
         { 
             //Services
             builder.Services.AddScoped<IProductsService, ProductService>();
+            builder.Services.AddScoped<IRolesService, RolesService>();
             builder.Services.AddScoped<IServicesServices, ServiceService>();
             builder.Services.AddTransient<SeedDb>();
             builder.Services.AddScoped<IUsersService, UsersService>();
