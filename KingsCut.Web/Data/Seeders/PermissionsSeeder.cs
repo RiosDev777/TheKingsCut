@@ -14,7 +14,7 @@ namespace KingsCut.Web.Data.Seeders
 
         public async Task SeedAsync()
         {
-            List<Permission> permissions = [.. Product(), .. Service(), .. Users()];
+            List<Permission> permissions = [.. Product(), .. Service(), .. Users(), ..Roles()];
 
             foreach (Permission permission in permissions)
             {
@@ -60,6 +60,17 @@ namespace KingsCut.Web.Data.Seeders
                 new Permission { Name = "createUser", Description = "Crear Usuarios", Module = "Usuarios" },
                 new Permission { Name = "editUser", Description = "Editar Usuarios", Module = "Usuarios" },
                 new Permission { Name = "deleteUser", Description = "Eliminar Usuarios", Module = "Usuarios" },
+            };
+        }
+
+        private List<Permission> Roles()
+        {
+            return new List<Permission>
+            {
+                new Permission { Name = "showRoles", Description = "Ver Roles", Module = "Roles" },
+                new Permission { Name = "createRoles", Description = "Crear Roles", Module = "Roles" },
+                new Permission { Name = "editRoles", Description = "Editar Roles", Module = "Roles" },
+                new Permission { Name = "deleteRoles", Description = "Eliminar Roles", Module = "Roles" },
             };
         }
     }

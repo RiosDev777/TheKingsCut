@@ -136,6 +136,67 @@ namespace KingsCut.Web.Controllers
 
             return View(dto);
         }
-    
+
+        [HttpGet]
+        [CustomAuthorized(permission: "updateRoles", module: "Roles")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            Response<KingsCutRoleDTO> response = await _rolesService.GetOneAsync(id);
+
+            if (!response.IsSuccess)
+            {
+                _notifyService.Error(response.Message);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(response.Result);
+        }
+
+        [HttpPost]
+        [CustomAuthorized(permission: "updateRoles", module: "Roles")]
+        public async Task<IActionResult> Edit(KingsCutRoleDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                _notifyService.Error("Debe ajustar los errores de validación.");
+
+                Response<IEnumerable<PermissionForDTO>> permissionsByRoleResponse = await _rolesService.GetPermissionsByRoleAsync(dto.Id);
+
+                dto.Permissions = permissionsByRoleResponse.Result.ToList();
+
+                return View(dto);
+            }
+
+            Response<KingsCutRoleDTO> response = await _rolesService.EditAsync(dto);
+
+            if (response.IsSuccess)
+            {
+                _notifyService.Success(response.Message);
+                return RedirectToAction(nameof(Index));
+            }
+
+            _notifyService.Error(response.Errors.First());
+            Response<IEnumerable<PermissionForDTO>> permissionsByRoleResponse2 = await _rolesService.GetPermissionsByRoleAsync(dto.Id);
+
+            dto.Permissions = permissionsByRoleResponse2.Result.ToList();
+
+            return View(dto);
+        }
+
+        [HttpPost]
+        [CustomAuthorized("deleteRoles", "Roles")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            Response<KingsCutRole> response = await _rolesService.DeleteAsync(id);
+
+            if (!response.IsSuccess)
+            {
+                _notifyService.Error(response.Message);
+                return RedirectToAction(nameof(Index));
+            }
+
+            _notifyService.Success(response.Message);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
