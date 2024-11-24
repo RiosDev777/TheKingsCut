@@ -13,7 +13,7 @@
             </a>
         </li>
 
-        @if (await _usersService.CurrentUserIsAuthorizedAsync("showService", "Servicios"))
+        @if (await _usersService.CurrentUserIsAuthorizedAsync("showServices", "Servicios"))
         {
 
             <li class="nav-item">
@@ -57,9 +57,9 @@
             
         }
 
-        Roles
+     @*    //Roles *@
 
-        @if (await _usersService.CurrentUserIsAuthorizedAsync("showRole", "Roles"))
+        @if (await _usersService.CurrentUserIsAuthorizedAsync("showRoles", "Roles"))
 
         {
 

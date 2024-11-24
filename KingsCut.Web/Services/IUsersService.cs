@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.Elfie.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TheKingsCut.Web.Core.Pagination;
-using ClainUser = System.Security.Claims.ClaimsPrincipal;
+using ClaimsUser = System.Security.Claims.ClaimsPrincipal;
 
 namespace KingsCut.Web.Services
 {
@@ -16,7 +16,6 @@ namespace KingsCut.Web.Services
         public Task<IdentityResult> AddUserAsync(User user, string password);
         public Task<IdentityResult> ConfirmEmailAsync(User user, string token);
         public Task<Response<User>> CreateAsync(UserDTO dto);
-
         public Task<bool> CurrentUserIsAuthorizedAsync(string permission, string module);
         public Task<string> GenerateEmailConfirmationTokenAsync(User user);
         public Task<Response<PaginationResponse<User>>> GetListAsync(PaginationRequest request);
@@ -37,7 +36,8 @@ namespace KingsCut.Web.Services
         private readonly IConverterHelper _converterHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersService(DataContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConverterHelper converterHelper, IHttpContextAccessor httpContextAccessor)
+        public UsersService(DataContext context, SignInManager<User> signInManager, UserManager<User> userManager, 
+            IConverterHelper converterHelper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _signInManager = signInManager;
@@ -80,24 +80,22 @@ namespace KingsCut.Web.Services
         public async Task<bool> CurrentUserIsAuthorizedAsync(string permission, string module)
         {
 
-            ClainUser? clainUser = _httpContextAccessor.HttpContext?.User;
+            ClaimsUser? claimUser = _httpContextAccessor.HttpContext?.User;
 
-            if (clainUser is null)
+            if (claimUser is null)
             {
 
                 return false;
 
             }
 
-            string? userName = clainUser.Identity.Name;
+            string? userName = claimUser.Identity.Name;
 
             User? user = await GetUserAsync(userName);
 
             if(user is null)
             {
-
                 return false;
-
             }
 
             if(user.kingsCutRole.Name == Env.SUPER_ADMIN_ROLE_NAME)

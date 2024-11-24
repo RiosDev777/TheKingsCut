@@ -28,7 +28,7 @@ namespace KingsCut.Web.Controllers
 
 
         [HttpGet]
-        [CustomAuthorized(permission: "showService", module: "Servicios")]
+        [CustomAuthorized(permission: "showServices", module: "Servicios")]
         public async Task<IActionResult> Index([FromQuery] int? RecordsPerPage,
                                                [FromQuery] int? Page,
                                                [FromQuery] string? Filter)
@@ -49,7 +49,7 @@ namespace KingsCut.Web.Controllers
 
         
         [HttpGet]
-        [CustomAuthorized(permission: "createService", module: "Servicios")]
+        [CustomAuthorized(permission: "createServices", module: "Servicios")]
         public IActionResult Create()
         {
 
@@ -57,7 +57,7 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorized(permission: "createService", module: "Servicios")]
+        [CustomAuthorized(permission: "createServices", module: "Servicios")]
         public async Task<IActionResult> Create([Bind("Id,Name,ServiceType,Price,Description")] Service service)
         {
             try
@@ -104,8 +104,7 @@ namespace KingsCut.Web.Controllers
         
 
         [HttpGet]
-        [CustomAuthorized(permission: "editService", module: "Servicios")]
-
+        [CustomAuthorized(permission: "editServices", module: "Servicios")]
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             Response<Service> response = await _servicesService.GetOneAsync(id);
@@ -124,7 +123,7 @@ namespace KingsCut.Web.Controllers
 
 
         [HttpPost]
-        [CustomAuthorized(permission: "editService", module: "Servicios")]
+        [CustomAuthorized(permission: "editServices", module: "Servicios")]
         public async Task<IActionResult> Edit(Service service)
         {
             try
@@ -155,7 +154,7 @@ namespace KingsCut.Web.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorized(permission: "deleteService", module: "Servicios")]
+        [CustomAuthorized(permission: "deleteServices", module: "Servicios")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             Response<Service> response = await _servicesService.DeleteteAsync(id);

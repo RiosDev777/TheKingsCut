@@ -18,11 +18,11 @@ namespace KingsCut.Web.Core.Attributes
             private readonly string _module;
             private readonly IUsersService _usersService;
 
-        public CustomAuthorizedFilter(IUsersService usersService, string permission, string module)
-            {
-                _usersService = usersService;
+        public CustomAuthorizedFilter(string permission, string module, IUsersService usersService)
+            {                
                 _permission = permission;
                 _module = module;
+                _usersService = usersService;
             }
 
 

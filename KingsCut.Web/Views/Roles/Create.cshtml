@@ -26,6 +26,8 @@
             </form>
         </div>
     </div>
+    @* Servicios *@
+    <partial name="_Services" />
 
     @* Permisos *@
     <partial name="_permissions" />
@@ -57,6 +59,18 @@
                 });
 
                 $('#permissionIds').val(JSON.stringify(permissionIds));
+
+                // Servicios
+                const services = $('.service:checked');
+                let serviceIds = [];
+
+                services.each(function () {
+
+                    const serviceId = $(this).data('service-id');
+                    serviceIds.push(serviceId);
+                });
+
+                $('#serviceIds').val(JSON.stringify(sectionIds));
             });
         });
 

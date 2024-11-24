@@ -7,6 +7,7 @@ using KingsCut.Web.Core;
 using KingsCut.Web.DTOs;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
+using static System.Collections.Specialized.BitVector32;
 
 namespace KingsCut.Web.Services
 {
@@ -14,11 +15,13 @@ namespace KingsCut.Web.Services
     {
         Task<Response<KingsCutRole>> CreateAsync(KingsCutRoleDTO dto);
         Task<Response<KingsCutRole>> DeleteAsync(int id);
-        Task<Response<KingsCutRoleDTO>> EditAsync(KingsCutRoleDTO dto);
+        Task<Response<KingsCutRole>> EditAsync(KingsCutRoleDTO dto);
         Task<Response<PaginationResponse<KingsCutRole>>> GetListAsync(PaginationRequest request);
         Task<Response<KingsCutRoleDTO>> GetOneAsync(int id);
         Task<Response<IEnumerable<Permission>>> GetPermissionsAsync();
         Task<Response<IEnumerable<PermissionForDTO>>> GetPermissionsByRoleAsync(int id);
+        Task<Response<IEnumerable<Service>>> GetServicesAsync();
+        Task<Response<IEnumerable<ServiceForDTO>>> GetServicesByRoleAsync(int id);
     }
 
     public class RolesService : IRolesService
@@ -43,6 +46,7 @@ namespace KingsCut.Web.Services
                     await _context.SaveChangesAsync();
 
                     int roleId = role.Id;
+
                     List<int> permissionIds = new List<int>();
 
                     if (!string.IsNullOrWhiteSpace(dto.PermissionIds))
@@ -59,6 +63,24 @@ namespace KingsCut.Web.Services
                         };
 
                         await _context.RolePermissions.AddAsync(rolePermission);
+                    }
+
+                    List<int> serviceIds = new List<int>();
+
+                    if (!string.IsNullOrWhiteSpace(dto.ServicesIds))
+                    {
+                        serviceIds = JsonConvert.DeserializeObject<List<int>>(dto.ServicesIds);
+                    }
+
+                    foreach (int serviceId in serviceIds)
+                    {
+                        RoleService rolePermission = new RoleService
+                        {
+                            RoleId = roleId,
+                            ServiceId = serviceId
+                        };
+
+                        await _context.RoleServices.AddAsync(rolePermission);
                     }
 
                     await _context.SaveChangesAsync();
@@ -78,48 +100,7 @@ namespace KingsCut.Web.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Response<KingsCutRole>> EditAsync(KingsCutRoleDTO dto)
-        {
-            try
-            {
-                if (dto.Name == Env.SUPER_ADMIN_ROLE_NAME)
-                {
-                    return ResponseHelper<KingsCutRole>.MakeResponseFail($"El Role '{Env.SUPER_ADMIN_ROLE_NAME}' no puede ser editado");
-                }
-
-                List<int> permissionsIds = new List<int>();
-
-                if (!string.IsNullOrWhiteSpace(dto.PermissionIds))
-                {
-                    permissionsIds = JsonConvert.DeserializeObject<List<int>>(dto.PermissionIds);
-                }
-
-                List<RolePermission> oldRolePermissions = await _context.RolePermissions.Where(rp => rp.RoleId == dto.Id).ToListAsync();
-                _context.RolePermissions.RemoveRange(oldRolePermissions);
-
-                foreach (int permissionsId in permissionsIds)
-                {
-                    RolePermission rolePermission = new RolePermission
-                    {
-                        RoleId = dto.Id,
-                        PermissionId = permissionsId
-                    };
-
-                    await _context.RolePermissions.AddAsync(rolePermission);
-                }
-
-                KingsCutRole model = _converterHelper.ToRole(dto);
-                _context.KingsCutRoles.Update(model);
-                await _context.SaveChangesAsync();
-
-                return ResponseHelper<KingsCutRole>.MakeResponseSuccess(model, "Rol Actualizado con éxito");
-            }
-            catch (Exception ex)
-            {
-                return ResponseHelper<KingsCutRole>.MakeResponseFail(ex);
-            }
-        }
-
+       
         public async Task<Response<PaginationResponse<KingsCutRole>>> GetListAsync(PaginationRequest request)
         {
             try
@@ -203,10 +184,104 @@ namespace KingsCut.Web.Services
                 return ResponseHelper<IEnumerable<PermissionForDTO>>.MakeResponseFail(ex);
             }
         }
-
-        Task<Response<KingsCutRoleDTO>> IRolesService.EditAsync(KingsCutRoleDTO dto)
+       
+        public async Task<Response<KingsCutRole>> EditAsync(KingsCutRoleDTO dto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (dto.Name == Env.SUPER_ADMIN_ROLE_NAME)
+                {
+                    return ResponseHelper<KingsCutRole>.MakeResponseFail($"El Role '{Env.SUPER_ADMIN_ROLE_NAME}' no puede ser editado");
+                }
+
+                List<int> permissionsIds = new List<int>();
+
+                if (!string.IsNullOrWhiteSpace(dto.PermissionIds))
+                {
+                    permissionsIds = JsonConvert.DeserializeObject<List<int>>(dto.PermissionIds);
+                }
+
+                List<RolePermission> oldRolePermissions = await _context.RolePermissions.Where(rp => rp.RoleId == dto.Id).ToListAsync();
+                _context.RolePermissions.RemoveRange(oldRolePermissions);
+
+                foreach (int permissionsId in permissionsIds)
+                {
+                    RolePermission rolePermission = new RolePermission
+                    {
+                        RoleId = dto.Id,
+                        PermissionId = permissionsId
+                    };
+
+                    await _context.RolePermissions.AddAsync(rolePermission);
+                }
+
+                List<int> serviceIds = new List<int>();
+
+                if (!string.IsNullOrWhiteSpace(dto.ServicesIds))
+                {
+                    serviceIds = JsonConvert.DeserializeObject<List<int>>(dto.ServicesIds);
+                }
+
+                List<RoleService> oldRoleServices = await _context.RoleServices.Where(rp => rp.RoleId == dto.Id).ToListAsync();
+                _context.RoleServices.RemoveRange(oldRoleServices);
+
+                foreach (int serviceId in serviceIds)
+                {
+                    RoleService roleService = new RoleService
+                    {
+                        RoleId = dto.Id,
+                        ServiceId = serviceId
+                    };
+
+                    await _context.RoleServices.AddAsync(roleService);
+                }
+
+                KingsCutRole model = _converterHelper.ToRole(dto);
+                _context.KingsCutRoles.Update(model);
+
+                await _context.SaveChangesAsync();
+
+                return ResponseHelper<KingsCutRole>.MakeResponseSuccess(model, "Rol Actualizado con éxito");
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper<KingsCutRole>.MakeResponseFail(ex);
+            }
+        }
+
+        public async Task<Response<IEnumerable<Service>>> GetServicesAsync()
+        {
+            try
+            {
+                IEnumerable<Service> Services = await _context.Services.ToListAsync();
+
+                return ResponseHelper<IEnumerable<Service>>.MakeResponseSuccess(Services);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper<IEnumerable<Service>>.MakeResponseFail(ex);
+            }
+        }
+
+        public async Task<Response<IEnumerable<ServiceForDTO>>> GetServicesByRoleAsync(int id)
+        {
+            try
+            {
+                Response<KingsCutRoleDTO> response = await GetOneAsync(id);
+
+                if (!response.IsSuccess)
+                {
+                    return ResponseHelper<IEnumerable<ServiceForDTO>>.MakeResponseFail(response.Message);
+                }
+
+                List<ServiceForDTO> services = response.Result.Service;
+
+                return ResponseHelper<IEnumerable<ServiceForDTO>>.MakeResponseSuccess(services);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper<IEnumerable<ServiceForDTO>>.MakeResponseFail(ex);
+            }
         }
     }
 }

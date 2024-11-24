@@ -29,17 +29,21 @@ namespace KingsCut.Web
                 config.Position = NotyfPosition.BottomRight;
             });
 
+            //Services
+            AddServices(builder);
 
-                AddServices(builder);
+            //Identity and Access Management
+            AddIAM(builder);
 
-                AddIAM(builder);
+            //PAM: Privileged access Management
 
-                builder.Services.AddNotyf(config => 
-                { 
-                    config.DurationInSeconds = 10; 
-                    config.IsDismissable = true; 
-                    config.Position = NotyfPosition.BottomRight; 
-                });
+            //Toast Notification
+            builder.Services.AddNotyf(config => 
+            { 
+                config.DurationInSeconds = 10; 
+                config.IsDismissable = true; 
+                config.Position = NotyfPosition.BottomRight; 
+            });
 
             return builder;
 

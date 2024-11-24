@@ -1,0 +1,31 @@
+﻿@using KingsCut.Web.Core.Extensions
+@model KingsCutRoleDTO
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+
+        <h3 class="card-title">Servicios</h3>
+
+        <div class="row">
+
+            @foreach (var module in Model.Service.GroupByItemsNumber(5))
+            {
+                <div class="col-md-3 mt-3">
+
+                    @foreach (var item in module)
+                    {
+                        <div class="form-check form-switch">
+                            <input class="form-check-input service"
+                                   type="checkbox"
+                                   data-service-id="@item.Id"
+                                   id="service_@item.Id"
+                            @(item.Selected ? "checked" : "")>
+
+                            <label class="form-check-label" for="permission_@item.Id">@item.Name</label>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

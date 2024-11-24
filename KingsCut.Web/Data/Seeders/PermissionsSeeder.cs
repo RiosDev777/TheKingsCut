@@ -45,10 +45,10 @@ namespace KingsCut.Web.Data.Seeders
         {
             return new List<Permission>
             {
-                new Permission { Name = "showService", Description = "Ver Servicios", Module = "Servicios" },
-                new Permission { Name = "createService", Description = "Crear Servicios", Module = "Servicios" },
-                new Permission { Name = "editService", Description = "Editar Servicios", Module = "Servicios" },
-                new Permission { Name = "deleteService", Description = "Eliminar Servicios", Module = "Servicios" },
+                new Permission { Name = "showServices", Description = "Ver Servicios", Module = "Servicios" },
+                new Permission { Name = "createServices", Description = "Crear Servicios", Module = "Servicios" },
+                new Permission { Name = "editServices", Description = "Editar Servicios", Module = "Servicios" },
+                new Permission { Name = "deleteServices", Description = "Eliminar Servicios", Module = "Servicios" },
             };
         }
 

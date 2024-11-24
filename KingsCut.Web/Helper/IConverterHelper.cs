@@ -30,10 +30,8 @@ namespace KingsCut.Web.Helper
 
             return new KingsCutRole
             {
-
                 Id = dto.Id,
                 Name = dto.Name,
-
             };
 
         }
@@ -52,14 +50,21 @@ namespace KingsCut.Web.Helper
 
             }).ToListAsync();
 
-            return new KingsCutRoleDTO
-
+            List<ServiceForDTO> services = await _context.Services.Select(p => new ServiceForDTO
             {
 
+                Id = p.Id,
+                Name = p.Name,                
+                Selected = _context.RoleServices.Any(rs => rs.ServiceId == p.Id && rs.RoleId == role.Id)
+
+            }).ToListAsync();
+
+            return new KingsCutRoleDTO
+            {
                 Id = role.Id,
                 Name = role.Name,
                 Permissions = permissions,
-
+                Service = services
             };
         }
 

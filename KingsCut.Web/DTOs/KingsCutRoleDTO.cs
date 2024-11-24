@@ -14,7 +14,10 @@ namespace KingsCut.Web.DTOs
         [Required(ErrorMessage = "El Campo {0} es requerido.")]
         public string Name { get; set; } = null!;
 
-        public List<PermissionForDTO> Permissions { get; set; }
+        public List<PermissionForDTO>? Permissions { get; set; }
         public string? PermissionIds { get; set; }
+        public List<ServiceForDTO>? Service { get; set; }
+        public string? ServicesIds { get; set; }
+        
     }
 }

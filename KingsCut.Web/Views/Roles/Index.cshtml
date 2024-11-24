@@ -63,7 +63,7 @@
                             <td>
                                 @if (item.Name != Env.SUPER_ADMIN_ROLE_NAME)
                                 {
-                                    @if(await _usersService.CurrentUserIsAuthorizedAsync("updateRoles", "Roles"))
+                                    @if(await _usersService.CurrentUserIsAuthorizedAsync("editRoles", "Roles"))
                                     {
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-fill"></i></a>
                                     }

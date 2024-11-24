@@ -24,5 +24,7 @@ namespace KingsCut.Web.Data.Entities
         [Display(Name = "Descripción")]
         public string? Description { get; set; }
 
+        public ICollection<RoleService>? RoleServices { get; set; }
+
     }
 }
